@@ -1,8 +1,10 @@
+import subprocess
+
 tr_path = 'covid.train.csv'  # path to training data
 tt_path = 'covid.test.csv'   # path to testing data
 
-!gdown --id '19CCyCgJrUxtvgZF53vnctJiOJ23T5mqF' --output covid.train.csv
-!gdown --id '1CE240jLm2npU-tdz81-oVKEF3T2yfT1O' --output covid.test.csv
+subprocess.run(['gdown', '--id', '19CCyCgJrUxtvgZF53vnctJiOJ23T5mqF', '--output', tr_path])
+subprocess.run(['gdown', '--id', '1CE240jLm2npU-tdz81-oVKEF3T2yfT1O', '--output', tt_path])
 
 
 
@@ -262,14 +264,12 @@ def test(tt_set, model, device):
     return preds
 
 
-
-
 '''hyperparameter'''
 device = get_device()                 # get the current available device ('cpu' or 'cuda')
 os.makedirs('models', exist_ok=True)  # The trained model will be saved to ./models/
 target_only = False                   # TODO: Using 40 states & 2 tested_positive features
 
-# TODO: How to tune these hyper-parameters to improve your model's performance?
+# TODO: tune these hyper-parameters to improve the model's performance
 config = {
     'n_epochs': 3000,                # maximum number of epochs
     'batch_size': 270,               # mini-batch size for dataloader
@@ -283,28 +283,16 @@ config = {
 }
 
 
-
 '''load dara'''
 tr_set = prep_dataloader(tr_path, 'train', config['batch_size'], target_only=target_only)
 dv_set = prep_dataloader(tr_path, 'dev', config['batch_size'], target_only=target_only)
 tt_set = prep_dataloader(tt_path, 'test', config['batch_size'], target_only=target_only)
 
-
-
-
 model = NeuralNet(tr_set.dataset.dim).to(device)  # Construct model and move to device
-
 
 
 '''training'''
 model_loss, model_loss_record = train(tr_set, dv_set, model, config, device)
-
-
-
-
-
-
-
 
 '''testing'''
 def save_pred(preds, file):
