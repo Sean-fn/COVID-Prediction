@@ -1,1 +1,1 @@
-# ntu_pytorch
+# COVID-19 ML Prediction
